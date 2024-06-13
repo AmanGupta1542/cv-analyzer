@@ -11,9 +11,19 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
   providedIn: 'root'
 })
 export class AuthService {
+  user: any;
   // private db = getDatabase();
 
-  constructor(private afAuth: AngularFireAuth, private firestore: AngularFirestore ) { }
+  constructor(public afAuth: AngularFireAuth, public firestore: AngularFirestore ) {
+    // Subscribe to the authentication state to maintain the user object
+    this.afAuth.authState.subscribe(user => {
+      if (user) {
+        this.user = user;
+      } else {
+        this.user = null;
+      }
+    });
+   }
 
   async signInWithGoogle() {
     const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
@@ -36,7 +46,7 @@ export class AuthService {
         // If the user document already exists, you can update it if necessary
         const existingData: any = userSnapshot.data();
         await userRef.set({
-          ...existingData,
+          // ...existingData,
           lastLogin: new Date()
         }, { merge: true });
       }
@@ -73,8 +83,8 @@ export class AuthService {
     return null;
   }
 
-  logout() {
-    return this.afAuth.signOut();
+  async signOut() {
+    await this.afAuth.signOut();
   }
 
 }

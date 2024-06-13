@@ -1,0 +1,6 @@
+<h1>Dashboard {{tokens}}</h1>
+<div *ngIf="authService.user">
+    <h1>Welcome, {{ authService.user.displayName }}</h1>
+    <p>Your tokens: {{ tokens }}</p>
+    <button (click)="authService.signOut()">Sign Out</button>
+</div>

@@ -104,11 +104,13 @@ export class GoogleSigninComponent implements OnInit {
   constructor(private authService: AuthService, private tokenService: TokenService) { }
 
   ngOnInit(): void {
-    const user = this.authService.autoLogin();
-    if (user) {
-      this.user = user;
-      this.loadUserTokens(user.uid);
-    }
+    // const user = this.authService.autoLogin();
+    // if (user) {
+    //   this.user = user;
+    //   this.loadUserTokens(user.uid);
+    // }
+    console.log(this.authService.user);
+    this.user = this.authService.user;
   }
   async signInWithGoogle() {
     this.authService.signInWithGoogle().catch(error => {
