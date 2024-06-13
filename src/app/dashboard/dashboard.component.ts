@@ -16,15 +16,15 @@ export class DashboardComponent implements OnInit {
   }
 
   async fetchUserTokens() {
-    const user = this.authService.user;
+    const user = null;
 
-    if (user) {
-      const userRef = this.authService.firestore.collection('users').doc(user.uid);
-      const userSnapshot: any = await userRef.get().toPromise();
+    // if (user) {
+    //   const userRef = this.authService.firestore.collection('users').doc(user.uid);
+    //   const userSnapshot: any = await userRef.get().toPromise();
 
-      if (userSnapshot?.exists) {
-        this.tokens = userSnapshot.data().tokens;
-      }
-    }
+    //   if (userSnapshot?.exists) {
+    //     this.tokens = userSnapshot.data().tokens;
+    //   }
+    // }
   }
 }

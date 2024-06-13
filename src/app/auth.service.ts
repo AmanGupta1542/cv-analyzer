@@ -6,22 +6,33 @@ import { User } from '@angular/fire/auth';
 import { getDatabase, ref, set, get, child } from '@angular/fire/database';
 import { AngularFireDatabase } from '@angular/fire/compat/database';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  user: any;
+  // user: any;
+  user$: Observable<any>;
+  private userSubject: BehaviorSubject<any>;
   // private db = getDatabase();
 
   constructor(public afAuth: AngularFireAuth, public firestore: AngularFirestore ) {
+    this.userSubject = new BehaviorSubject(null);
+    this.user$ = this.userSubject.asObservable();
     // Subscribe to the authentication state to maintain the user object
-    this.afAuth.authState.subscribe(user => {
-      if (user) {
-        this.user = user;
-      } else {
-        this.user = null;
-      }
+    // Subscribe to authentication state changes
+    this.afAuth.authState.pipe(
+      switchMap(user => {
+        if (user) {
+          return this.firestore.doc(`users/${user.uid}`).valueChanges();
+        } else {
+          return [];
+        }
+      })
+    ).subscribe(user => {
+      this.userSubject.next(user);
     });
    }
 
@@ -50,6 +61,7 @@ export class AuthService {
           lastLogin: new Date()
         }, { merge: true });
       }
+      this.userSubject.next(user);
     }
   }
 
@@ -85,6 +97,7 @@ export class AuthService {
 
   async signOut() {
     await this.afAuth.signOut();
+    this.userSubject.next(null);
   }
 
 }

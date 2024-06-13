@@ -109,8 +109,27 @@ export class GoogleSigninComponent implements OnInit {
     //   this.user = user;
     //   this.loadUserTokens(user.uid);
     // }
-    console.log(this.authService.user);
-    this.user = this.authService.user;
+    // Subscribe to user$ observable to get user data
+    this.authService.user$.subscribe(user => {
+      this.user = user;
+      if (user) {
+        console.log('User is logged in:', user.displayName);
+        this.fetchUserTokens(user);
+        // Additional logic when user is logged in
+      } else {
+        console.log('User is logged out.');
+        // Additional logic when user is logged out
+      }
+    });
+  }
+  async fetchUserTokens(user:any) {
+
+      const userRef = this.authService.firestore.collection('users').doc(user.uid);
+      const userSnapshot: any = await userRef.get().toPromise();
+
+      if (userSnapshot?.exists) {
+        this.tokens = userSnapshot.data().tokens;
+      }
   }
   async signInWithGoogle() {
     this.authService.signInWithGoogle().catch(error => {
@@ -140,4 +159,8 @@ export class GoogleSigninComponent implements OnInit {
   //   //   console.error('Error during sign-in:', error);
   //   // }
   // }
+
+  signOut() {
+    this.authService.signOut();
+  }
 }

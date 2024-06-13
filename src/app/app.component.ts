@@ -18,14 +18,13 @@ export class AppComponent implements OnInit {
 
   async ngOnInit() {
     // Automatically redirect if user is already authenticated
-    this.authService.afAuth.authState.subscribe(user => {
-      console.log(user);
+    this.authService.user$.subscribe(user => {
       if (user) {
-        this.authService.user = user;
-        // this.router.navigate(['/dashboard']); // Example route after login
+        console.log('User logged in:', user.displayName);
+        // this.router.navigate(['/dashboard']); // Navigate to dashboard or any other route after login
       } else {
-        this.authService.user = null;
-        // this.router.navigate(['/login']); // Example route for login page
+        console.log('User logged out.');
+        // this.router.navigate(['/login']); // Navigate to login page if not authenticated
       }
     });
   }
