@@ -3,6 +3,7 @@ export const environment = {
   firebase: {
     apiKey: "AIzaSyB80eSaPT3gZPIGNgwIKFBNqBiGUaGRy20",
     authDomain: "cv-analyze-app.firebaseapp.com",
+    databaseURL: 'https://cv-analyze-app-default-rtdb.asia-southeast1.firebasedatabase.app/',
     projectId: "cv-analyze-app",
     storageBucket: "cv-analyze-app.appspot.com",
     messagingSenderId: "266358466687",

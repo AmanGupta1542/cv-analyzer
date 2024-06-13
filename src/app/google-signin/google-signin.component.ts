@@ -2,6 +2,7 @@
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AuthService } from '../auth.service';
 import firebase from 'firebase/compat/app';
+import { TokenService } from '../token.service';
 
 // @Component({
 //   selector: 'app-google-signin',
@@ -83,7 +84,7 @@ import { getAuth } from 'firebase/auth';
 //   }
 // }
 
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 // import { Auth, signInWithPopup, GoogleAuthProvider } from '@angular/fire/auth';
 import { GoogleAuthProvider } from '@angular/fire/auth';
 // import { inject } from '@angular/core';
@@ -95,22 +96,46 @@ import { GoogleAuthProvider } from '@angular/fire/auth';
   templateUrl: './google-signin.component.html',
   styleUrls: ['./google-signin.component.css']
 })
-export class GoogleSigninComponent {
+export class GoogleSigninComponent implements OnInit {
+  user: any;
+  tokens: number = 0;
   // private auth = inject(Auth);
   // constructor(public afAuth: AngularFireAuth) {}
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private tokenService: TokenService) { }
 
-
+  ngOnInit(): void {
+    const user = this.authService.autoLogin();
+    if (user) {
+      this.user = user;
+      this.loadUserTokens(user.uid);
+    }
+  }
   async signInWithGoogle() {
-    // this.afAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-    // const auth = getAuth();
-    this.authService.login();
-    // const provider = new GoogleAuthProvider();
+    this.authService.signInWithGoogle().catch(error => {
+      console.error('Error during Google sign-in:', error);
+    });
     // try {
-    //   await signInWithPopup(this.auth, provider);
-    //   console.log('User signed in with Google');
+    //   this.user = await this.authService.signInWithGoogle();
+    //   this.loadUserTokens(this.user.uid);
     // } catch (error) {
-    //   console.error('Error during sign-in:', error);
+    //   console.error(error);
     // }
   }
+
+  private async loadUserTokens(uid: string) {
+    this.tokens = await this.tokenService.getUserTokens(uid);
+  }
+
+  // async signInWithGoogle() {
+  //   // this.afAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+  //   // const auth = getAuth();
+  //   this.authService.signInWithGoogle();
+  //   // const provider = new GoogleAuthProvider();
+  //   // try {
+  //   //   await signInWithPopup(this.auth, provider);
+  //   //   console.log('User signed in with Google');
+  //   // } catch (error) {
+  //   //   console.error('Error during sign-in:', error);
+  //   // }
+  // }
 }
