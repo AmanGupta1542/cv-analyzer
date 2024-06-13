@@ -1,0 +1,21 @@
+
+.home{
+    position: static;
+    height: 100vh;
+    width: 100vw;
+    background-color: black;
+    color: white;
+}
+
+.body-left div{
+    font-size: 48px;
+    color: white;
+    font-weight: bold;
+    margin: auto;
+    text-align: center;
+}
+.body-right div{
+    font-size: 30px;
+    color: white;
+    height: 100px;
+}

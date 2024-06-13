@@ -1,114 +1,25 @@
-// import { Component } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { AuthService } from '../auth.service';
-import firebase from 'firebase/compat/app';
-import { TokenService } from '../token.service';
-
-// @Component({
-//   selector: 'app-google-signin',
-//   standalone: true,
-//   imports: [],
-//   templateUrl: './google-signin.component.html',
-//   styleUrl: './google-signin.component.css'
-// })
-
-// export class GoogleSigninComponent {
-//   constructor(public afAuth: AngularFireAuth) {}
-
-//   signInWithGoogle() {
-//     this.afAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-//   }
-
-//   signOut() {
-//     this.afAuth.signOut();
-//   }
-// }
-
-
-// import { Component } from '@angular/core';
-// import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
-import { getAuth } from 'firebase/auth';
-
-// @Component({
-//   selector: 'app-google-signin',
-//   templateUrl: './google-signin.component.html',
-//   styleUrls: ['./google-signin.component.css']
-// })
-// export class GoogleSigninComponent {
-
-//   constructor(public afAuth: AngularFireAuth) {}
-
-//   signInWithGoogle() {
-//     this.afAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-//     // const auth = getAuth();
-//     // signInWithPopup(auth, new GoogleAuthProvider())
-//     //   .then(result => {
-//     //     console.log(result.user);
-//     //   })
-//     //   .catch(error => {
-//     //     console.error(error);
-//     //   });
-//   }
-
-//   signOut() {
-//     const auth = getAuth();
-//     signOut(auth).then(() => {
-//       console.log('User signed out');
-//     }).catch(error => {
-//       console.error(error);
-//     });
-//   }
-// }
-
-
-// import { Component } from '@angular/core';
-// import { Auth, signInWithPopup, GoogleAuthProvider } from '@angular/fire/auth';
-// import { inject } from '@angular/core';
-
-// @Component({
-//   selector: 'app-google-signin',
-//   templateUrl: './google-signin.component.html',
-//   styleUrls: ['./google-signin.component.css']
-// })
-// export class GoogleSigninComponent {
-//   private auth = inject(Auth);
-
-//   async signInWithGoogle() {
-//     const provider = new GoogleAuthProvider();
-//     try {
-//       await signInWithPopup(this.auth, provider);
-//       console.log('User signed in with Google');
-//     } catch (error) {
-//       console.error('Error during sign-in:', error);
-//     }
-//   }
-// }
 
 import { Component, OnInit } from '@angular/core';
-// import { Auth, signInWithPopup, GoogleAuthProvider } from '@angular/fire/auth';
-import { GoogleAuthProvider } from '@angular/fire/auth';
-// import { inject } from '@angular/core';
+import { AuthService } from '../auth.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TokenService } from '../token.service';
 
 @Component({
   selector: 'app-google-signin',
-  // standalone: true,
-  // providers: [Auth],
   templateUrl: './google-signin.component.html',
   styleUrls: ['./google-signin.component.css']
 })
 export class GoogleSigninComponent implements OnInit {
   user: any;
+  analyzeForm: FormGroup;
   tokens: number = 0;
-  // private auth = inject(Auth);
-  // constructor(public afAuth: AngularFireAuth) {}
-  constructor(private authService: AuthService, private tokenService: TokenService) { }
+  constructor(private fb: FormBuilder, private authService: AuthService, private tokenService: TokenService) { }
 
   ngOnInit(): void {
-    // const user = this.authService.autoLogin();
-    // if (user) {
-    //   this.user = user;
-    //   this.loadUserTokens(user.uid);
-    // }
+    this.analyzeForm = this.fb.group({
+      description: ['', Validators.required],
+      files: [null, Validators.required]
+    });
     // Subscribe to user$ observable to get user data
     this.authService.user$.subscribe(user => {
       this.user = user;
@@ -135,32 +46,87 @@ export class GoogleSigninComponent implements OnInit {
     this.authService.signInWithGoogle().catch(error => {
       console.error('Error during Google sign-in:', error);
     });
-    // try {
-    //   this.user = await this.authService.signInWithGoogle();
-    //   this.loadUserTokens(this.user.uid);
-    // } catch (error) {
-    //   console.error(error);
-    // }
   }
 
   private async loadUserTokens(uid: string) {
     this.tokens = await this.tokenService.getUserTokens(uid);
   }
 
-  // async signInWithGoogle() {
-  //   // this.afAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-  //   // const auth = getAuth();
-  //   this.authService.signInWithGoogle();
-  //   // const provider = new GoogleAuthProvider();
-  //   // try {
-  //   //   await signInWithPopup(this.auth, provider);
-  //   //   console.log('User signed in with Google');
-  //   // } catch (error) {
-  //   //   console.error('Error during sign-in:', error);
-  //   // }
-  // }
-
   signOut() {
     this.authService.signOut();
   }
+
+  onFileChange(event: any) {
+    const files = event.target.files;
+    if (files.length) {
+      this.analyzeForm.patchValue({
+        files: files
+      });
+    }
+  }
+
+  async onSubmit() {
+    console.log(this.analyzeForm)
+    if (this.analyzeForm.valid) {
+      const { description, files } = this.analyzeForm.value;
+      // console.log(this.user)
+      // {
+      //   "photoURL": "https://lh3.googleusercontent.com/a/ACg8ocIxoUY_MU54KkMrrLEGZxegeeY5rVAIzijXUa8TvW4ubWHajs8=s96-c",
+      //   "uid": "LjwDgs9WvAYWNSV3u3CQBgIWria2",
+      //   "email": "amangupta1542@gmail.com",
+      //   "displayName": "Aman Gupta",
+      //   "tokens": 10,
+      //   "lastLogin": {
+      //       "seconds": 1718273735,
+      //       "nanoseconds": 994000000
+      //   }
+      // }
+
+      if (this.user) {
+        const userRef = this.authService.firestore.collection('users').doc(this.user.uid);
+        const userSnapshot = await userRef.get().toPromise();
+
+        let tokens = 0;
+        if (userSnapshot?.exists) {
+          const userData: any = userSnapshot.data();
+          tokens = userData.tokens || 0;
+
+          if (tokens < files.length) {
+            alert('Not enough tokens.');
+            return;
+          }
+
+          tokens -= files.length;
+          await userRef.update({ tokens });
+        }
+
+        // Create or update the candidate collection
+        const candidateRef = this.authService.firestore.collection('candidates').doc(this.user.uid);
+        const candidateSnapshot = await candidateRef.get().toPromise();
+
+        if (!candidateSnapshot?.exists) {
+          await candidateRef.set({
+            uid: this.user.uid,
+            description,
+            files: Array.from(files).map((file: any) => file.name),
+            createdAt: new Date()
+          });
+        } else {
+          const existingData: any = candidateSnapshot.data();
+          await candidateRef.set({
+            ...existingData,
+            description,
+            files: [...existingData.files, ...Array.from(files).map((file: any) => file.name)],
+            updatedAt: new Date()
+          }, { merge: true });
+        }
+
+        // this.router.navigate(['/candidate']);
+      }
+      else{
+        console.log('Please login!');
+      }
+    }
+  }
+
 }

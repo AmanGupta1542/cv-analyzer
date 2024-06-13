@@ -7,6 +7,7 @@ import { environment } from '../environments/environment';
 import { GoogleSigninComponent } from './google-signin/google-signin.component';
 import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 // Import the functions you need from the SDKs you need
@@ -39,6 +40,7 @@ const firebaseConfig = {
   ],
   imports: [
     BrowserModule,
+    ReactiveFormsModule,
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFireAuthModule,
     AngularFireDatabaseModule,

@@ -1,4 +1,4 @@
-<div *ngIf="!user">
+<!-- <div *ngIf="!user">
     <button (click)="signInWithGoogle()">Sign in with Google</button>
 </div>
     <div *ngIf="user">
@@ -7,4 +7,35 @@
       <p>Email: {{ user.email }}</p>
       <p>Tokens: {{ tokens }}</p>
       <button (click)="signOut()" class="btn btn-danger">Sign Out</button>
+    </div> -->
+
+    <div class="container-fluid home">
+      <div class="row header justify-content-end">
+          <div class="col-12 col-md-1 mx-5 my-3">
+              <button *ngIf="!user" (click)="signInWithGoogle()" class="p-4 btn btn-light" style="height: 120px; width: 120px; border-radius: 50%;">Sign in with Google</button>
+              <button *ngIf="user" (click)="signOut()" class="p-4 btn btn-light" style="height: 120px; width: 120px; border-radius: 50%;">Sign Out</button>
+              
+          </div>
+      </div>
+      <div class="row body">
+          <div class="body-left col-lg-8 col-12">
+              <div>
+                  Evaluate a CV of <br>
+                  a candidate with AI
+              </div>
+          </div>
+          <div class="body-right col-lg-4 col-12">
+            <form [formGroup]="analyzeForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+              <label for="description">Description</label>
+              <input type="text" id="description" formControlName="description" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label for="files">Upload PDFs</label>
+              <input type="file" id="files" (change)="onFileChange($event)" multiple class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-primary" [disabled]="!analyzeForm.valid">Analyze</button>
+          </form>
+          </div>
+      </div>
     </div>
