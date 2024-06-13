@@ -37,9 +37,10 @@ export class GoogleSigninComponent implements OnInit {
     });
   }
 
-  getSelectedFilesCount(): number {
+  getSelectedFilesCount(): string {
     const files = this.analyzeForm.get('files')?.value;
-    return files ? files.length : 0;
+    const file_length = files ? files.length : 0;
+    return file_length > 1  ? files.length+" CVs" : files.length+" CV";
   }
   
   cleanForm(){
@@ -142,7 +143,8 @@ export class GoogleSigninComponent implements OnInit {
         // this.router.navigate(['/candidate']);
       }
       else{
-        alert('Please login!');
+        // alert('Please login!');
+        this.signInWithGoogle();
       }
       this.isLoading = false;
     }

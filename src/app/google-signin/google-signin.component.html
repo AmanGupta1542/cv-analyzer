@@ -12,8 +12,8 @@
     <div class="container-fluid home">
       <div class="row header justify-content-end">
           <div class="col-12 mx-5 mt-3 mb-5">
-              <button *ngIf="!user" (click)="signInWithGoogle()" class="p-4 btn btn-light" style="height: 85px; width: 120px; float: right; border-radius: 50%; background: white;">Google Sign</button>
-              <button *ngIf="user" (click)="signOut()" class="p-4 btn btn-light" style="height: 85px; width: 120px; float: right; border-radius: 50%; background: white;">Sign Out</button>
+              <button *ngIf="!user" (click)="signInWithGoogle()" class="p-4 btn btn-light" style="height: 85px; width: 150px; float: right; border-radius: 50%; background: white;">Google Sign</button>
+              <button *ngIf="user" (click)="signOut()" class="p-4 btn btn-light" style="height: 85px; width: 150px; float: right; border-radius: 50%; background: white;">Sign Out</button>
               
           </div>
       </div>
@@ -58,10 +58,10 @@
 
   <p-dialog [modal]="true" [(visible)]="desc_dialog" [style]="{ width: '50vw', height: '80vh' }">
       <div style="height: 80%;" [formGroup]="analyzeForm">
-        <textarea id="description" rows="8" formControlName="description" class="form-control"></textarea>
+        <textarea id="description" rows="4" formControlName="description" class="form-control"></textarea>
         <div class="mt-2">
-          Insert your job description here. You don't need to worry about the layout or structure. <br>
-          Just include the essence of the job, tasks, deliverables, requirements, qualifications, skills, etc.
+          <small>Insert your job description here. You don't need to worry about the layout or structure. <br>
+            Just include the essence of the job, tasks, deliverables, requirements, qualifications, skills, etc.</small>
         </div>
         <!-- <input type="text" id="description" formControlName="description" class="form-control" /> -->
       </div>
@@ -76,7 +76,7 @@
   <p-dialog [modal]="true" [(visible)]="file_dialog" [style]="{ width: '50vw', height: '80vh' }">
     <div style="height: 80%; text-align: center;">
       <label for="files" style="margin-top: 20%;border: 1px solid black;padding: 10px 20px;">Open files</label>
-      <input style="display: none;" accept=".pdf" type="file" id="files" (change)="onFileChange($event)" multiple class="form-control" />
+      <input style="display: none;" type="file" id="files" (change)="onFileChange($event)" multiple class="form-control" />
     </div>
     <div class="d-flex" style="height: 20%;">
       <div style="margin: auto;">
