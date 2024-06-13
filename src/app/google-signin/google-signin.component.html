@@ -11,35 +11,77 @@
 
     <div class="container-fluid home">
       <div class="row header justify-content-end">
-          <div class="col-12 col-md-1 mx-5 my-3">
-              <button *ngIf="!user" (click)="signInWithGoogle()" class="p-4 btn btn-light" style="height: 120px; width: 120px; border-radius: 50%;">Sign in with Google</button>
-              <button *ngIf="user" (click)="signOut()" class="p-4 btn btn-light" style="height: 120px; width: 120px; border-radius: 50%;">Sign Out</button>
+          <div class="col-12 mx-5 mt-3 mb-5">
+              <button *ngIf="!user" (click)="signInWithGoogle()" class="p-4 btn btn-light" style="height: 85px; width: 120px; float: right; border-radius: 50%; background: white;">Google Sign</button>
+              <button *ngIf="user" (click)="signOut()" class="p-4 btn btn-light" style="height: 85px; width: 120px; float: right; border-radius: 50%; background: white;">Sign Out</button>
               
           </div>
       </div>
       <div class="row body">
-          <div class="body-left col-lg-8 col-12">
-              <div>
+          <div class="body-left col-lg-7 col-12">
+              <div style="margin-top: 100px;">
                   Evaluate a CV of <br>
                   a candidate with AI
               </div>
           </div>
           <div class="body-right col-lg-4 col-12">
+            <div (click)="showDialog()" class="before-analyze-form" [ngClass]="{'after-analyze-form': analyzeForm.get('description')?.valid, 'before-analyze-form': !analyzeForm.get('description')?.valid}">
+              
+              {{ analyzeForm.get('description')?.valid ? 'Job Description Pasted!' : 'Paste your job description' }}
+            </div>
+            <div (click)="showFileDialog()" class="before-analyze-form" [ngClass]="{'after-analyze-form': analyzeForm.get('files')?.valid, 'before-analyze-form': !analyzeForm.get('files')?.valid}">
+              {{ analyzeForm.get('files')?.valid ? getSelectedFilesCount() + ' Uploaded!' : 'Upload some CV' }}
+            </div>
             <form [formGroup]="analyzeForm" (ngSubmit)="onSubmit()">
-            <div class="form-group">
-              <label for="description">Description</label>
-              <input type="text" id="description" formControlName="description" class="form-control" />
-            </div>
-            <div class="form-group">
-              <label for="files">Upload PDFs</label>
-              <input accept=".pdf" type="file" id="files" (change)="onFileChange($event)" multiple class="form-control" />
-            </div>
-            <!-- <button type="submit" class="btn btn-primary" [disabled]="!analyzeForm.valid">Analyze <br> ({{tokens}}) tokens</button> -->
-            <button type="submit" class="btn btn-primary" [disabled]="!analyzeForm.valid || isLoading">
-              Analyze <br> ({{tokens}}) tokens
-              <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            </button>
-          </form>
+              <button type="submit" [disabled]="!analyzeForm.valid || isLoading" style="background-color: #077E1A; font-size: 27px;">Analyze<span style="font-size: 20px; display: block;">({{tokens}} tokens)</span></button>
+            </form>
+            <!-- <form [formGroup]="analyzeForm" (ngSubmit)="onSubmit()">
+              <div class="form-group">
+                <label for="description">Description</label>
+                <input type="text" id="description" formControlName="description" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label for="files">Upload PDFs</label>
+                <input accept=".pdf" type="file" id="files" (change)="onFileChange($event)" multiple class="form-control" />
+              </div> -->
+              <!-- <button type="submit" class="btn btn-primary" [disabled]="!analyzeForm.valid">Analyze <br> ({{tokens}}) tokens</button> -->
+              <!-- <button type="submit" class="btn btn-primary" [disabled]="!analyzeForm.valid || isLoading" style="font-size: 27px;">
+                Analyze <span style="font-size: 27px; display: block;">({{tokens}}) tokens</span>
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              </button>
+            </form> -->
           </div>
+          <div class="col-12 col-lg-1"></div>
       </div>
     </div>
+
+
+  <p-dialog [modal]="true" [(visible)]="desc_dialog" [style]="{ width: '50vw', height: '80vh' }">
+      <div style="height: 80%;" [formGroup]="analyzeForm">
+        <textarea id="description" rows="8" formControlName="description" class="form-control"></textarea>
+        <div class="mt-2">
+          Insert your job description here. You don't need to worry about the layout or structure. <br>
+          Just include the essence of the job, tasks, deliverables, requirements, qualifications, skills, etc.
+        </div>
+        <!-- <input type="text" id="description" formControlName="description" class="form-control" /> -->
+      </div>
+      <div class="d-flex" style="height: 20%;">
+        <div style="margin: auto;">
+          <button (click)="desc_dialog = false" class="dialog-button" style="background-color: black; color: white;">Confirm</button>
+          <button (click)="desc_dialog = false" class="dialog-button">Cancel</button>
+        </div>
+      </div>
+  </p-dialog>
+
+  <p-dialog [modal]="true" [(visible)]="file_dialog" [style]="{ width: '50vw', height: '80vh' }">
+    <div style="height: 80%; text-align: center;">
+      <label for="files" style="margin-top: 20%;border: 1px solid black;padding: 10px 20px;">Open files</label>
+      <input style="display: none;" accept=".pdf" type="file" id="files" (change)="onFileChange($event)" multiple class="form-control" />
+    </div>
+    <div class="d-flex" style="height: 20%;">
+      <div style="margin: auto;">
+        <button (click)="file_dialog = false" class="dialog-button" style="background-color: black; color: white;">Confirm</button>
+        <button (click)="file_dialog = false" class="dialog-button">Cancel</button>
+      </div>
+    </div>
+  </p-dialog>

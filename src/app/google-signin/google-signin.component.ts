@@ -14,11 +14,13 @@ export class GoogleSigninComponent implements OnInit {
   analyzeForm: FormGroup;
   tokens: number = 0;
   isLoading = false;
+  desc_dialog: boolean = false;
+  file_dialog: boolean = false;
   constructor(private fb: FormBuilder, private authService: AuthService, private tokenService: TokenService) { }
 
   ngOnInit(): void {
     this.analyzeForm = this.fb.group({
-      description: ['', Validators.required],
+      description: ['', [Validators.required, Validators.minLength(300)]],
       files: [null, Validators.required]
     });
     // Subscribe to user$ observable to get user data
@@ -32,6 +34,18 @@ export class GoogleSigninComponent implements OnInit {
         console.log('User is logged out.');
         // Additional logic when user is logged out
       }
+    });
+  }
+
+  getSelectedFilesCount(): number {
+    const files = this.analyzeForm.get('files')?.value;
+    return files ? files.length : 0;
+  }
+  
+  cleanForm(){
+    this.analyzeForm.patchValue({
+      description: '',
+      files: null
     });
   }
   async fetchUserTokens(user:any) {
@@ -124,7 +138,7 @@ export class GoogleSigninComponent implements OnInit {
             updatedAt: new Date()
           }, { merge: true });
         }
-        this.analyzeForm.reset(); // Reset the form
+        this.cleanForm(); // Reset the form
         // this.router.navigate(['/candidate']);
       }
       else{
@@ -132,6 +146,15 @@ export class GoogleSigninComponent implements OnInit {
       }
       this.isLoading = false;
     }
+  }
+
+  showDialog() {
+    this.desc_dialog = true;
+  }
+
+  showFileDialog(){
+    this.desc_dialog = false;
+    this.file_dialog = true;
   }
 
 }
