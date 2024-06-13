@@ -13,6 +13,7 @@ export class GoogleSigninComponent implements OnInit {
   user: any;
   analyzeForm: FormGroup;
   tokens: number = 0;
+  isLoading = false;
   constructor(private fb: FormBuilder, private authService: AuthService, private tokenService: TokenService) { }
 
   ngOnInit(): void {
@@ -53,6 +54,7 @@ export class GoogleSigninComponent implements OnInit {
   }
 
   signOut() {
+    this.tokens = 0;
     this.authService.signOut();
   }
 
@@ -68,6 +70,7 @@ export class GoogleSigninComponent implements OnInit {
   async onSubmit() {
     console.log(this.analyzeForm)
     if (this.analyzeForm.valid) {
+      this.isLoading = true; // Show loader
       const { description, files } = this.analyzeForm.value;
       // console.log(this.user)
       // {
@@ -93,6 +96,7 @@ export class GoogleSigninComponent implements OnInit {
 
           if (tokens < files.length) {
             alert('Not enough tokens.');
+            this.isLoading = false;
             return;
           }
 
@@ -120,12 +124,13 @@ export class GoogleSigninComponent implements OnInit {
             updatedAt: new Date()
           }, { merge: true });
         }
-
+        this.analyzeForm.reset(); // Reset the form
         // this.router.navigate(['/candidate']);
       }
       else{
-        console.log('Please login!');
+        alert('Please login!');
       }
+      this.isLoading = false;
     }
   }
 

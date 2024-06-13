@@ -32,9 +32,13 @@
             </div>
             <div class="form-group">
               <label for="files">Upload PDFs</label>
-              <input type="file" id="files" (change)="onFileChange($event)" multiple class="form-control" />
+              <input accept=".pdf" type="file" id="files" (change)="onFileChange($event)" multiple class="form-control" />
             </div>
-            <button type="submit" class="btn btn-primary" [disabled]="!analyzeForm.valid">Analyze</button>
+            <!-- <button type="submit" class="btn btn-primary" [disabled]="!analyzeForm.valid">Analyze <br> ({{tokens}}) tokens</button> -->
+            <button type="submit" class="btn btn-primary" [disabled]="!analyzeForm.valid || isLoading">
+              Analyze <br> ({{tokens}}) tokens
+              <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            </button>
           </form>
           </div>
       </div>
